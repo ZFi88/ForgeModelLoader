@@ -3,13 +3,14 @@ package zfi.forge;
 import com.google.gson.Gson;
 import com.mashape.unirest.http.Unirest;
 
-import static spark.Spark.*;
+import static spark.Spark.get;
+import static spark.Spark.staticFileLocation;
 
 public class ModelLoader {
     public static void main(String[] args) {
         staticFileLocation("/");
         get("/hello", (req, res) -> "Hello World");
-        get("/getToken", (req, res) -> {
+        get("/getToken", "application/json", (req, res) -> {
             String appId = req.queryParams("appId");
             String secret = req.queryParams("secret");
 
@@ -22,7 +23,7 @@ public class ModelLoader {
                     .field("scope", "data:read%20data:write%20bucket:read%20bucket:create%20bucket:write")
                     .asString().getBody();
             TokenResponce resp = gson.fromJson(respBody, TokenResponce.class);
-            return resp.access_token;
+            return resp;
         });
     }
 
