@@ -11,20 +11,19 @@ import {LoadResult} from '../Dto/load-result';
 import {TranslationJobDto} from '../Dto/translation-job-dto';
 import {TranslateJobResultDto} from '../Dto/translate-job-result-dto';
 import {JobManifestDto} from '../Dto/job-manifest-dto';
+import {environment} from '../../environments/environment';
 
 @Injectable()
 export class ForgeService {
   private headers = new HttpHeaders().set('Content-Type', 'application/json');
-  private scope: string = 'data:read%20data:write%20bucket:read%20bucket:create%20bucket:write';
   private token: string;
+  private endpoint: string = environment.apiEndpoint;
 
   constructor(private http: HttpClient, private snackService: SnackService) {
   }
 
   public getToken(appId: string, secret: string): Observable<TokenDto> {
-    return this.http.post('https://developer.api.autodesk.com/authentication/v1/authenticate'
-      , `client_id=${appId}&client_secret=${secret}&grant_type=client_credentials&scope=${this.scope}`
-      , {headers: new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded')})
+    return this.http.get(`${this.endpoint}getToken?appId=${appId}&secret=${secret}`)
       .map(x => {
         const tokenDto = x as TokenDto;
         this.token = tokenDto.access_token;
@@ -50,12 +49,15 @@ export class ForgeService {
   public loadModel(bucketName: string, modelName: string, fileData: any): Observable<LoadResult> {
     return this.http.put(`https://developer.api.autodesk.com/oss/v2/buckets/${bucketName}/objects/${modelName}`
       , fileData
-      , {headers: new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded')})
+      , {
+        headers: new HttpHeaders().set('Content-Type', 'application/octet-stream')
+          .set('Authorization', `Bearer ${this.token}`)
+      })
       .map(x => x as LoadResult)
       .catch((e: Error) => this.handleError(e));
   }
 
-  public convertModel(urn: string): Observable<any> {
+  public convertModel(urn: string): Observable<TranslateJobResultDto> {
     const job = new TranslationJobDto();
     job.input.urn = urn;
     job.output.destination.region = 'us';
@@ -68,7 +70,7 @@ export class ForgeService {
       .catch((e: Error) => this.handleError(e));
   }
 
-  public checkJob(urn: string): Observable<any> {
+  public checkJob(urn: string): Observable<JobManifestDto> {
     return this.http.get(`https://developer.api.autodesk.com/modelderivative/v2/designdata/${urn}/manifest`)
       .map(x => x as JobManifestDto)
       .catch((e: Error) => this.handleError(e));

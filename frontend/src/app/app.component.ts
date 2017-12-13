@@ -4,6 +4,7 @@ import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {SnackService} from './services/snack.service';
 import 'rxjs/add/operator/mergeMap';
 import {Base64} from './services/base64';
+import {clearInterval} from 'timers';
 
 @Component({
   selector: 'app-root',
@@ -58,6 +59,14 @@ export class AppComponent implements OnInit {
         let urn = base64.encode(fileLoadResult.objectId);
         urn = urn.replace(/=/g, '').replace('/', '_');
         return this.forgeService.convertModel(urn);
-      }).subscribe();
+      }).subscribe(job => {
+      const intervalId = setInterval(() => {
+        this.forgeService.checkJob(job.urn).subscribe(manifest => {
+          if (manifest.status === 'complete') {
+            clearInterval(intervalId);
+          }
+        });
+      }, 1000);
+    });
   }
 }
