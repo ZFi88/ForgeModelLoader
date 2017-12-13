@@ -1,0 +1,30 @@
+.inputCard{
+  width: 70%;
+  height: 70%;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.fileInput{
+  width: 80%;
+}
+
+.example-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.example-container > * {
+  width: 100%;
+}
+
+.example-right-align {
+  text-align: right;
+}
+
+input.example-right-align::-webkit-outer-spin-button,
+input.example-right-align::-webkit-inner-spin-button {
+  display: none;
+}
