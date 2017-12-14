@@ -1,20 +1,8 @@
 group 'forge'
 version '1.0'
 
-buildscript {
-    repositories {
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
-    }
-    dependencies {
-        classpath "com.moowork.gradle:gradle-node-plugin:1.2.0"
-    }
-}
-
 apply plugin: 'java'
 apply plugin: 'idea'
-apply plugin: "com.moowork.node"
 
 sourceCompatibility = 1.8
 
@@ -22,22 +10,57 @@ repositories {
     mavenCentral()
 }
 
-configurations {
-    libraries
+dependencies {
+    compile "com.sparkjava:spark-core:2.7.1"
+    compile "com.mashape.unirest:unirest-java:1.4.9"
+    compile 'com.google.code.gson:gson:2.8.2'
 }
 
-dependencies {
-    libraries "com.sparkjava:spark-core:2.7.1"
-    libraries "com.mashape.unirest:unirest-java:1.4.9"
-    libraries 'com.google.code.gson:gson:2.8.2'
-    configurations.compile.extendsFrom(configurations.libraries)
+task deleteFiles(type: Delete) {
+    delete fileTree('./src/main/resources')
+}
+
+task buildFrontend(type: Exec) {
+    doFirst {
+        def modules = new File('frontend/node_modules')
+        if (!modules.exists()) {
+            exec {
+                workingDir './frontend'
+                commandLine 'cmd', '/c', 'npm', 'install'
+            }
+        }
+    }
+    workingDir './frontend'
+    commandLine 'cmd', '/c', 'ng', 'build', '--prod', '--env=prod'
+    standardOutput = new ByteArrayOutputStream()
+    doLast {
+        println standardOutput.toString()
+    }
+    dependsOn deleteFiles
+}
+
+task copyToRes {
+    doFirst {
+        copy {
+            from './frontend/dist'
+            into './src/main/resources'
+        }
+    }
+    dependsOn buildFrontend
 }
 
 jar {
-    into('lib') {
-        from configurations.libraries
+    manifest {
+        attributes('Class-Path': configurations.compile.collect { './lib/' + it.getName() }.join(' '),
+                'Main-Class': 'ru.zfi.forge.ModelLoader')
     }
+//    into('lib') {
+//        from configurations.compile
+//    }
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     into 'resources', {
         from 'resources'
     }
 }
+
+build.dependsOn copyToRes

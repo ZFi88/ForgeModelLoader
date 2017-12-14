@@ -9,11 +9,13 @@ import {ReactiveFormsModule} from '@angular/forms';
 import {ForgeService} from './services/forge.service';
 import {SnackService} from './services/snack.service';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import { ViewerComponent } from './viewer/viewer.component';
 
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    ViewerComponent
   ],
   imports: [
     BrowserModule,
