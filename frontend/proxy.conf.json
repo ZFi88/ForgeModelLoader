@@ -1,0 +1,7 @@
+{
+  "/": {
+    "target": "http://localhost:45000/",
+    "secure": false,
+    "ws": true
+  }
+}

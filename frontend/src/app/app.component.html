@@ -3,7 +3,7 @@
     <div class="inputCard">
       <mat-card class="example-card">
         <mat-card-header>
-          <mat-card-title><h2>Load model</h2></mat-card-title>
+          <mat-card-title><h2>Autodesk Forge model loader</h2></mat-card-title>
         </mat-card-header>
         <mat-card-content>
 
@@ -38,6 +38,14 @@
               <i class="material-icons">file_upload</i>
               <input #fileInput type="file" (change)="onFileInput($event)" style="display:none;"/>
             </button>
+
+            <mat-form-field class="fileInput">
+              <input matInput placeholder="URN" formControlName="urn" #urn>
+            </mat-form-field>
+            <button mat-raised-button color="accent"
+                    [ngxClipboard]="urn" (cbOnSuccess)="copyUrn()">
+              <i class="material-icons">content_copy</i>
+            </button>
           </form>
 
           <div *ngIf="showProgress">
@@ -54,10 +62,9 @@
     </div>
   </mat-grid-tile>
   <mat-grid-tile>
-    <div style="width: 80%;height: 80%;">
+    <div style="width: 100%;height: 100%;">
       <app-viewer></app-viewer>
     </div>
-
   </mat-grid-tile>
 </mat-grid-list>
 

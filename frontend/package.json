@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve --proxy-config proxy.conf.json --port 4200",
     "build": "ng build",
     "buildProd": "ng build --prod",
     "test": "ng test",
@@ -26,6 +26,8 @@
     "@angular/router": "^5.0.0",
     "core-js": "^2.4.1",
     "hammerjs": "^2.0.8",
+    "lodash": "^4.17.4",
+    "ngx-clipboard": "^9.0.0",
     "rxjs": "^5.5.2",
     "zone.js": "0.8.13"
   },

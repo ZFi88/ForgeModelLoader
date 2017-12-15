@@ -24,6 +24,8 @@ export class AppComponent implements OnInit {
   showProgress: boolean = false;
   buckets: Bucket[] = [];
 
+  urn: string;
+
   mode: string = 'indeterminate';
   status: string;
 
@@ -36,7 +38,8 @@ export class AppComponent implements OnInit {
       bucketName: '',
       bucketType: '',
       file: '',
-      fileData: {}
+      fileData: {},
+      urn: ''
     });
 
     this.form.valueChanges.subscribe(value => {
@@ -59,6 +62,7 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.viewer.modelLoaded.subscribe(urn => this.urn = urn);
   }
 
   onFileInput(event: any) {
@@ -94,6 +98,8 @@ export class AppComponent implements OnInit {
         urn = urn.replace(/=/g, '').replace('/', '_');
         return this.forgeService.convertModel(urn);
       }).subscribe((job: TranslateJobResultDto) => {
+      let urnControl = this.form.get('urn') as FormControl;
+      urnControl.setValue(job.urn);
       this.status = 'Translating model...';
       this.mode = 'query';
       const intervalId = setInterval(() => {
@@ -106,5 +112,9 @@ export class AppComponent implements OnInit {
         });
       }, 3000);
     });
+  }
+
+  copyUrn() {
+    this.snack.success('URN copied to clipboard');
   }
 }

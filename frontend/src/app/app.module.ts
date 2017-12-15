@@ -10,6 +10,7 @@ import {ForgeService} from './services/forge.service';
 import {SnackService} from './services/snack.service';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { ViewerComponent } from './viewer/viewer.component';
+import {ClipboardModule} from 'ngx-clipboard/dist';
 
 
 @NgModule({
@@ -22,7 +23,8 @@ import { ViewerComponent } from './viewer/viewer.component';
     BrowserAnimationsModule,
     MaterialModule,
     ReactiveFormsModule,
-    HttpClientModule
+    HttpClientModule,
+    ClipboardModule
   ],
   providers: [ForgeService, SnackService],
   bootstrap: [AppComponent]

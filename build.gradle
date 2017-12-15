@@ -13,11 +13,10 @@ repositories {
 dependencies {
     compile "com.sparkjava:spark-core:2.7.1"
     compile "com.mashape.unirest:unirest-java:1.4.9"
-    compile 'com.google.code.gson:gson:2.8.2'
 }
 
 task deleteFiles(type: Delete) {
-    delete fileTree('./src/main/resources')
+    delete fileTree('./src/main/resources/public')
 }
 
 task buildFrontend(type: Exec) {
@@ -43,7 +42,7 @@ task copyToRes {
     doFirst {
         copy {
             from './frontend/dist'
-            into './src/main/resources'
+            into './src/main/resources/public'
         }
     }
     dependsOn buildFrontend
@@ -51,12 +50,8 @@ task copyToRes {
 
 jar {
     manifest {
-        attributes('Class-Path': configurations.compile.collect { './lib/' + it.getName() }.join(' '),
-                'Main-Class': 'ru.zfi.forge.ModelLoader')
+        attributes('Main-Class': 'ru.zfi.forge.ModelLoader')
     }
-//    into('lib') {
-//        from configurations.compile
-//    }
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     into 'resources', {
         from 'resources'

@@ -1,1 +1,9 @@
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
+
+.mat-snack-bar-container.success{
+  background: #067c34;
+}
+
+.mat-snack-bar-container.error{
+  background: #7c0802;
+}

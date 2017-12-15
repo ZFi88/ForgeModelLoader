@@ -81,15 +81,6 @@ export class ForgeService {
       };
       xhr.send(bytesArray);
     });
-
-    // return this.http.put(`https://developer.api.autodesk.com/oss/v2/buckets/${bucketName}/objects/${modelName}`
-    //   , fileData
-    //   , {
-    //     headers: new HttpHeaders().set('Content-Type', 'application/octet-stream')
-    //       .set('Authorization', `Bearer ${this.token}`)
-    //   })
-    //   .map(x => x as LoadResult)
-    //   .catch((e: Error) => this.handleError(e));
   }
 
   public convertModel(urn: string): Observable<TranslateJobResultDto> {
@@ -113,7 +104,8 @@ export class ForgeService {
   }
 
   private handleError(e: any): Observable<any> {
-    this.snackService.error('Ошибка: ' + (e && e.message) || 'ошибка');
+    if (e.status === 401) this.snackService.error('Invalid app ID or app secret');
+    else this.snackService.error('Ошибка: ' + (e && e.message) || 'ошибка');
     return Observable.throw(e);
   }
 

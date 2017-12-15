@@ -2,6 +2,7 @@ import {Component, NgZone, OnDestroy, OnInit, ViewChild, ViewEncapsulation} from
 import {SnackService} from '../services/snack.service';
 import 'rxjs/add/observable/of';
 import {ForgeService} from '../services/forge.service';
+import {Subject} from 'rxjs/Subject';
 
 declare const Autodesk: any;
 
@@ -15,6 +16,8 @@ export class ViewerComponent implements OnInit, OnDestroy {
   @ViewChild('viewerContainer') viewerContainer: any;
   public viewer: any;
   private urn: string;
+
+  public modelLoaded: Subject<string> = new Subject<string>();
 
   constructor(private ngZone: NgZone, private forgeService: ForgeService, private snackService: SnackService) {
   }
@@ -65,7 +68,8 @@ export class ViewerComponent implements OnInit, OnDestroy {
   }
 
   private onLoadModelSuccess(model) {
-    this.snackService.success('Model loaded')
+    // this.snackService.success('Model loaded')
+    this.modelLoaded.next(this.urn);
   }
 
   private onLoadModelError(viewerErrorCode) {
